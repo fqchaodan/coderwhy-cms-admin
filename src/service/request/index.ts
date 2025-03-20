@@ -31,20 +31,24 @@ class HYRequest {
         return err
       }
     )
+    // 修改源码：统一处理 response
     this.instance.interceptors.response.use(
       (res) => {
-        return res.data
+        return {
+          data: res.data.data,
+          status: res.data.code
+        }
       },
       (err) => {
-        return err
+        return {
+          data: err.response.data,
+          status: err.response.status
+        }
       }
     )
 
     // 针对特定的hyRequest实例添加拦截器
-    this.instance.interceptors.request.use(
-      config.interceptors?.requestSuccessFn,
-      config.interceptors?.requestFailureFn
-    )
+    this.instance.interceptors.request.use(config.interceptors?.requestSuccessFn, config.interceptors?.requestFailureFn)
     this.instance.interceptors.response.use(
       config.interceptors?.responseSuccessFn,
       config.interceptors?.responseFailureFn
@@ -63,7 +67,11 @@ class HYRequest {
     return new Promise<T>((resolve, reject) => {
       this.instance
         .request<any, T>(config)
-        .then((res) => {
+        .then((res: any) => {
+          // 修改源码：统一处理 response
+          if (res.status !== 200 && res.status !== 0) {
+            return reject(res)
+          }
           // 单词响应的成功拦截处理
           if (config.interceptors?.responseSuccessFn) {
             res = config.interceptors.responseSuccessFn(res)
@@ -79,12 +87,15 @@ class HYRequest {
   get<T = any>(config: HYRequestConfig<T>) {
     return this.request({ ...config, method: 'GET' })
   }
+
   post<T = any>(config: HYRequestConfig<T>) {
     return this.request({ ...config, method: 'POST' })
   }
+
   delete<T = any>(config: HYRequestConfig<T>) {
     return this.request({ ...config, method: 'DELETE' })
   }
+
   patch<T = any>(config: HYRequestConfig<T>) {
     return this.request({ ...config, method: 'PATCH' })
   }

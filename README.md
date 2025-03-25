@@ -55,7 +55,7 @@ const phoneLoginFormRef = ref<InstanceType<typeof PhoneLoginForm>>()
 
 ### pinia持久化
 
-区别与 coderwhy 直接使用 localCache, 我选择使用 pinia 的持久化插件 `pinia-plugin-persistedstate`
+区别与 coderwhy 直接使用 localCache, 我选择使用 pinia 的持久化插件 [*pinia-plugin-persistedstate*](https://prazdevs.github.io/pinia-plugin-persistedstate/zh/)
 
 ```bash
 pnpm i pinia-plugin-persistedstate
@@ -74,13 +74,15 @@ app.use(createPinia().use(piniaPluginPersist))
 
 在 store 中开启
 
-```typescript
+```
 export const useUserStore = defineStore(
   'user',
   () => {
   },
   {
-    persist: true
+    persist: {
+      
+    }
   }
 )
 ```
@@ -119,7 +121,7 @@ const phoneLoginTime = () => {
 }
 ```
 
-- 最后在组建中，通过 **storeToRefs** 引用，可以保持响应性
+- 最后在组件中，通过 **storeToRefs** 引用，可以保持响应性
 
 ```
 

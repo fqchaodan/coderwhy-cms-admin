@@ -1,20 +1,22 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import { ElMessage, ElNotification } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import type { FormInstance, FormRules } from 'element-plus'
 import type { AccountFormData, LoginResponseData } from '@/types/login'
 import { accountLoginApi } from '@/service/login'
 import { useUserStore } from '@/stores/user'
-import router from '@/router'
 import type { ResType } from '@/types'
 
 const userStore = useUserStore()
 
-const form = ref<AccountFormData>({ account: '', password: '' })
+const form = ref<AccountFormData>({
+  account: userStore.userInfo.account || '',
+  password: userStore.userInfo.password || ''
+})
 const formRef = ref<FormInstance>()
 
 if (import.meta.env.VITE_URL === 'dev') {
-  form.value = { account: 'coderwhy', password: '123456' }
+  // form.value = { account: '', password: '' }
 }
 
 const rules = ref<FormRules<AccountFormData>>({
@@ -22,21 +24,21 @@ const rules = ref<FormRules<AccountFormData>>({
   password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
 })
 
-const onSubmit = async () => {
+const onSubmit = async (passwordChecked: boolean) => {
   if (!formRef.value) return
   await formRef.value.validate((valid, fields) => {
     if (valid) {
       accountLoginApi(form.value)
         .then((res: ResType<LoginResponseData>) => {
-          userStore.setUserInfo(res.data)
+          userStore.login(res.data)
 
-          ElNotification({
-            title: '登录成功',
-            message: '欢迎使用番茄后台管理系统',
-            type: 'success'
-          })
-
-          router.push('/')
+          // 判断是否记住密码
+          userStore.isRembered = passwordChecked
+          if (passwordChecked) {
+            useUserStore().setUserInfo({ account: form.value.account, password: form.value.password })
+          } else {
+            useUserStore().setUserInfo({ account: '', password: '' })
+          }
         })
         .catch((err) => {
           console.log(err)

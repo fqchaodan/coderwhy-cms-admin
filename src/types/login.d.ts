@@ -3,8 +3,13 @@ export interface AccountFormData {
   password: string
 }
 
-export interface LoginResponseData {
+export interface PhoneFormData {
+  phone: string
+  code: string
+}
+
+export interface LoginResponseData extends AccountFormData {
   id: number
   name: string
-  token: string
+  token: string | undefined
 }

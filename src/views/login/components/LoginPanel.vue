@@ -3,10 +3,11 @@ import { ref } from 'vue'
 import { Avatar, Phone } from '@element-plus/icons-vue'
 import AccountLoginForm from '@/views/login/components/AccountLoginForm.vue'
 import PhoneLoginForm from '@/views/login/components/PhoneLoginForm.vue'
+import { useUserStore } from '@/stores/user'
 
-const curTab = ref(1)
+const curTab = ref(0)
 
-const passwordChecked = ref(false)
+const passwordChecked = ref(useUserStore().isRembered)
 
 const forget = () => {
   console.log('忘记密码')
@@ -17,7 +18,7 @@ const accountLoginFormRef = ref<InstanceType<typeof AccountLoginForm>>()
 const phoneLoginFormRef = ref<InstanceType<typeof PhoneLoginForm>>()
 
 const submit = () => {
-  curTab.value === 0 ? accountLoginFormRef.value?.onSubmit() : phoneLoginFormRef.value?.onSubmit()
+  curTab.value === 0 ? accountLoginFormRef.value?.onSubmit(passwordChecked.value) : phoneLoginFormRef.value?.onSubmit()
 }
 </script>
 
@@ -51,7 +52,7 @@ const submit = () => {
       <div class="text-sm text-[--el-color-primary] cursor-pointer" @click="forget">忘记密码</div>
     </div>
 
-    <el-button icon="pointer" size="large" type="primary" @click="submit">立即登录 </el-button>
+    <el-button icon="pointer" size="large" type="primary" @click="submit">立即登录</el-button>
   </div>
 </template>
 

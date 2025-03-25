@@ -17,9 +17,12 @@ import 'element-plus/dist/index.css'
 // Element-plus icons
 import registerIcons from '@/global/register-icons'
 
+// pinia presist
+import piniaPluginPersist from 'pinia-plugin-persistedstate'
+
 const app = createApp(App)
 
-app.use(createPinia())
+app.use(createPinia().use(piniaPluginPersist))
 app.use(router)
 app.use(registerIcons)
 

@@ -1,6 +1,7 @@
 import axios from 'axios'
 import type { AxiosInstance } from 'axios'
 import type { HYRequestConfig } from './type'
+import { ElMessage } from 'element-plus'
 
 // 拦截器: 蒙版Loading/token/修改配置
 
@@ -40,6 +41,7 @@ class HYRequest {
         }
       },
       (err) => {
+        ElMessage.error(err.response.data || '请求错误')
         return {
           data: err.response.data,
           status: err.response.status
@@ -70,6 +72,7 @@ class HYRequest {
         .then((res: any) => {
           // 修改源码：统一处理 response
           if (res.status !== 200 && res.status !== 0) {
+            // ElMessage.error('请求错误')
             return reject(res)
           }
           // 单词响应的成功拦截处理

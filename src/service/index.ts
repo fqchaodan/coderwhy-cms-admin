@@ -1,4 +1,3 @@
-import { localCache } from '@/utils/cache'
 import { BASE_URL, TIME_OUT } from './config'
 import HYRequest from './request'
 import { useUserStore } from '@/stores/user'
@@ -11,7 +10,6 @@ const hyRequest = new HYRequest({
       // 每一个请求都自动携带token
       const token = useUserStore().userInfo.token
       if (config.headers && token) {
-        // 类型缩小
         config.headers.Authorization = 'Bearer ' + token
       }
       return config

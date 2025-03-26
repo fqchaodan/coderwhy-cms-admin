@@ -7,6 +7,7 @@
 - vue3 + TS + Vue-Router + Pinia + Axios
 - Element-plus + UnoCSS
 - 包管理器使用pnpm
+- RBAC 权限控制
 
 ## 登录模块
 
@@ -21,6 +22,7 @@ import 'element-plus/dist/index.css'
 
 ```typescript
 // 修改源码：统一处理 response
+
 this.instance.interceptors.response.use(
   (res) => {
     return {
@@ -29,6 +31,7 @@ this.instance.interceptors.response.use(
     }
   },
   (err) => {
+    ElMessage.error(err.response.data.message)
     return {
       data: err.response.data,
       status: err.response.status
@@ -80,9 +83,7 @@ export const useUserStore = defineStore(
   () => {
   },
   {
-    persist: {
-      
-    }
+    persist: true
   }
 )
 ```
@@ -170,4 +171,32 @@ const phoneLoginTime = () => {
     </el-form-item>
  </template>
 
+```
+
+### 权限 & 菜单栏
+
+#### 获取信息
+
+在登录成功后，获取用户权限信息及菜单栏信息
+其中权限采取 `RBAC`,管理员账号为 `coderwhy`，普通用户为 `coderdemo`
+
+```typescript
+// 获取登录用户的详细信息（role）
+const res: ResType<UserRoleInfo> = await getUserInfoApi(userInfo.value.id)
+userRoleInfo.value = res.data
+
+// 获取用户菜单权限
+const roleRes: ResType<MenuInfo[]> = await getUserMenusApi(userRoleInfo.value.id)
+menuInfo.value = roleRes.data
+```
+
+#### 菜单栏图标循环渲染
+
+通过 `component` 渲染图标
+
+```vue
+
+<el-icon>
+  <component :is="item.icon.substring(7)"></component>
+</el-icon>
 ```

@@ -79,12 +79,12 @@ export const useUserStore = defineStore(
     // 退出登录
     const logout = async () => {
       clearUserInfo()
+      await router.replace('/login')
       ElNotification({
         title: '退出成功',
         message: '欢迎下次再来',
         type: 'success'
       })
-      await router.replace('/login')
     }
 
     // 验证码登录计时

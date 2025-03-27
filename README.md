@@ -200,3 +200,7 @@ menuInfo.value = roleRes.data
   <component :is="item.icon.substring(7)"></component>
 </el-icon>
 ```
+
+### 头部
+
+左侧新增图标，用过父子组件通信实现菜单栏收缩

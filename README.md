@@ -173,6 +173,8 @@ const phoneLoginTime = () => {
 
 ```
 
+## 首页布局
+
 ### 权限 & 菜单栏
 
 #### 获取信息
@@ -199,6 +201,73 @@ menuInfo.value = roleRes.data
 <el-icon>
   <component :is="item.icon.substring(7)"></component>
 </el-icon>
+```
+
+#### 动态路由
+
+核心：先引入所有组件，再动态添加路由
+
+```typescript
+// 注册所有的组件
+const modules = import.meta.glob('@/views/main/**/**/index.vue')
+
+// 动态添加路由
+export const dynamicAddRoute = () => {
+  const userStore = useUserStore()
+
+  userStore.menuInfo.map((item: MenuInfo) => {
+    item.children.map((child: MenuChildInfo) => {
+      if (child.url) {
+        const route: Route = {
+          path: child.url,
+          name: child.url.split('/')[child.url.split('/').length - 1],
+
+          component: modules[`/src/views${child.url}/index.vue`] as () => Component
+        }
+        router.addRoute('main', route)
+      }
+    })
+
+    useRouterStore().setRoutes(router.getRoutes())
+  })
+}
+```
+
+问题：
+
+- 添加路由时需要注意，` component: modules[`/src/views${child.url}/index.vue`] as () => Component`不能使用`@`，需要使用`/src`
+- `addRouter()`时，`name`需要填`main`才能添加进`main`的子路由
+- 添加完路由后，刷新页面，路由会丢失，需要重新添加路由。在`main.ts`中引用并且放在`app.use(router)`前，即将路由注册完再使用
+
+```typescript
+// 路由重加载
+const routeRefresh = () => {
+  if (userInfo.value.token) {
+    dynamicAddRoute()
+  }
+}
+```
+
+#### 优化`pinia`
+
+将`pinia`注册封装为函数，然后导出，在`main.ts`中引用导出函数即可
+
+```typescript
+import { createPinia } from 'pinia'
+import type { App } from 'vue'
+
+// pinia presist
+import piniaPluginPersist from 'pinia-plugin-persistedstate'
+
+import { useUserStore } from '@/stores/user'
+
+const registerStore = (app: App<Element>) => {
+  app.use(createPinia().use(piniaPluginPersist))
+
+  useUserStore().routeRefresh()
+}
+
+export default registerStore
 ```
 
 ### 头部

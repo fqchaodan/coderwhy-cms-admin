@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { ElNotification } from 'element-plus'
 import type { LoginResponseData, MenuInfo, UserRoleInfo } from '@/types/login'
-import router from '@/router'
+import router, { dynamicAddRoute } from '@/router'
 import { getUserInfoApi, getUserMenusApi } from '@/service/login'
 import type { ResType } from '@/types'
 
@@ -44,6 +44,9 @@ export const useUserStore = defineStore(
       // 获取用户菜单权限
       const roleRes: ResType<MenuInfo[]> = await getUserMenusApi(userRoleInfo.value.id)
       menuInfo.value = roleRes.data
+
+      // 动态添加路由
+      dynamicAddRoute()
 
       // 跳转
       ElNotification({
@@ -102,6 +105,13 @@ export const useUserStore = defineStore(
       }, 1000)
     }
 
+    // 路由重加载
+    const routeRefresh = () => {
+      if (userInfo.value.token) {
+        dynamicAddRoute()
+      }
+    }
+
     return {
       userInfo,
       isRembered,
@@ -112,7 +122,8 @@ export const useUserStore = defineStore(
       setUserInfo,
       clearUserInfo,
       logout,
-      phoneLoginTime
+      phoneLoginTime,
+      routeRefresh
     }
   },
   {

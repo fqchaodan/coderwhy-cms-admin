@@ -12,11 +12,11 @@ const onIconShow = (show: boolean) => {
 <template>
   <div class="w-full h-100vh">
     <el-container class="w-full h-full">
-      <el-aside :class="iconShow ? '!w-200px' : '!w-50px'" class="h-full shadow">
+      <el-aside :class="iconShow ? '!w-200px' : '!w-50px'" class="h-full">
         <MainMenu :iconShow="iconShow" />
       </el-aside>
       <el-container>
-        <el-header class="!h-50px !p-0 shadow">
+        <el-header class="!h-50px !p-0">
           <MainHeader @icon-show="onIconShow" />
         </el-header>
         <el-main class="bg-gray-1 rounded">

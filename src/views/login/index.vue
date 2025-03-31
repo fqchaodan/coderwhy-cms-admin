@@ -1,5 +1,10 @@
 <script lang="ts" setup>
 import LoginPanel from '@/views/login/components/LoginPanel.vue'
+
+import { useUserStore } from '@/stores/user'
+
+// 进入登录页时，清空用户信息
+useUserStore().clearUserInfo()
 </script>
 
 <template>

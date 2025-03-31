@@ -1,5 +1,11 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import type { MenuChildInfo, MenuInfo } from '@/types/login'
+import type { Component } from 'vue'
+import type { Route } from '@/types/router'
+
+// 注册所有的组件
+const modules = import.meta.glob('@/views/main/**/**/index.vue')
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.VITE_BASE_URL),
@@ -11,10 +17,7 @@ const router = createRouter({
     {
       path: '/main',
       name: 'main',
-      component: () => import('@/views/main/index.vue'),
-      children: [
-        { path: '/main/analysis/overview', component: () => import('@/views/main/analysis/overview/index.vue') }
-      ]
+      component: () => import('@/views/main/index.vue')
     },
     {
       path: '/login',
@@ -41,5 +44,24 @@ router.beforeEach(async (to, from, next) => {
     }
   }
 })
+
+// 动态添加路由
+export const dynamicAddRoute = () => {
+  const userStore = useUserStore()
+
+  userStore.menuInfo.map((item: MenuInfo) => {
+    item.children.map((child: MenuChildInfo) => {
+      if (child.url) {
+        const route: Route = {
+          path: child.url,
+          name: child.url.split('/')[child.url.split('/').length - 1],
+
+          component: modules[`/src/views${child.url}/index.vue`] as () => Component
+        }
+        router.addRoute('main', route)
+      }
+    })
+  })
+}
 
 export default router

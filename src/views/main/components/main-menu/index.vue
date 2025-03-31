@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useUserStore } from '@/stores/user'
+import router from '@/router'
 
 const props = defineProps({
   iconShow: {
@@ -12,7 +13,7 @@ const userStore = useUserStore()
 </script>
 
 <template>
-  <el-scrollbar class="bg-slate-4" height="100vh">
+  <el-scrollbar height="100vh">
     <div class="w-full h-full flex flex-col items-center">
       <!--  Logo  -->
       <div class="w-full h-30px flex items-center justify-around p-1">
@@ -25,8 +26,7 @@ const userStore = useUserStore()
         :collapse="!iconShow"
         :default-active="userStore.menuInfo[0].children[0].id + ''"
         active-text-color="#409EFF"
-        background-color="#F2F6FC"
-        class="w-full !bg-slate-3 select-none"
+        class="w-full select-none !border-none"
         collapse-transition
         popper-effect="light"
         router
@@ -49,7 +49,7 @@ const userStore = useUserStore()
               <!--                </el-sub-menu>-->
               <!--              </div>-->
               <!--              <div v-else>-->
-              <el-menu-item :index="child.id + ''" :route="child.url">{{ child.name }} </el-menu-item>
+              <el-menu-item :index="child.id + ''" :route="child.url">{{ child.name }}</el-menu-item>
               <!--              </div>-->
             </template>
           </el-sub-menu>

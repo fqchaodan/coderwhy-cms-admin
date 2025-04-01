@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { useUserStore } from '@/stores/user'
-import router from '@/router'
+import { useRoute } from 'vue-router'
+import { mapPathToMenu } from '@/utils/menu'
+import { computed } from 'vue'
 
 const props = defineProps({
   iconShow: {
@@ -10,6 +12,12 @@ const props = defineProps({
 })
 
 const userStore = useUserStore()
+
+// 跟随面包屑的更新而更新
+const route = useRoute()
+const defaultActive = computed(() => {
+  return mapPathToMenu(route.path, userStore.menuInfo)
+})
 </script>
 
 <template>
@@ -24,7 +32,7 @@ const userStore = useUserStore()
       <!-- Menu -->
       <el-menu
         :collapse="!iconShow"
-        :default-active="userStore.menuInfo[0].children[0].id + ''"
+        :default-active="defaultActive"
         active-text-color="#409EFF"
         class="w-full select-none !border-none"
         collapse-transition
@@ -40,17 +48,7 @@ const userStore = useUserStore()
               <span>{{ item.name }}</span>
             </template>
             <template v-for="child in item.children" :key="child.id">
-              <!--              <div v-if="child.children && child.children.length">-->
-              <!--                <el-sub-menu :index="child.id + ''" class="!bg-slate-2">-->
-              <!--                  <template #title>-->
-              <!--                    <span>{{ child.name }}</span>-->
-              <!--                  </template>-->
-              <!--                  <el-menu-item :index="child.id" :route="child.url">{{ child.name }}</el-menu-item>-->
-              <!--                </el-sub-menu>-->
-              <!--              </div>-->
-              <!--              <div v-else>-->
               <el-menu-item :index="child.id + ''" :route="child.url">{{ child.name }}</el-menu-item>
-              <!--              </div>-->
             </template>
           </el-sub-menu>
         </template>

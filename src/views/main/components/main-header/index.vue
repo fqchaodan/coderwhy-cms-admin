@@ -1,6 +1,9 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import HeaderInfo from '@/views/main/components/main-header/HeaderInfo.vue'
+import { mapPathToBreadcrumbs } from '@/utils/menu'
+import { useRoute } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 
 const emits = defineEmits(['iconShow'])
 
@@ -9,6 +12,12 @@ const handleMenuIcon = () => {
   iconShow.value = !iconShow.value
   emits('iconShow', iconShow.value)
 }
+
+// 面包屑实时更新
+const route = useRoute()
+const breadcrumbs = computed(() => {
+  return mapPathToBreadcrumbs(route.path, useUserStore().menuInfo)
+})
 </script>
 
 <template>
@@ -18,8 +27,9 @@ const handleMenuIcon = () => {
         <component :is="iconShow ? 'Fold' : 'Expand'"></component>
       </el-icon>
       <el-breadcrumb separator="/">
-        <el-breadcrumb-item :to="{ path: '/' }">homepage</el-breadcrumb-item>
-        <el-breadcrumb-item>promotion detail</el-breadcrumb-item>
+        <template v-for="item in breadcrumbs" :key="item.path">
+          <el-breadcrumb-item :to="item.path">{{ item.name }}</el-breadcrumb-item>
+        </template>
       </el-breadcrumb>
     </div>
 

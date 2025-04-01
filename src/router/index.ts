@@ -38,7 +38,11 @@ router.beforeEach(async (to, from, next) => {
   } else {
     const token = useUserStore().userInfo.token
     if (token) {
-      next()
+      if (to.path === '/main') {
+        next(firstPath?.path as string)
+      } else {
+        next()
+      }
     } else {
       next('/login')
     }
@@ -46,22 +50,26 @@ router.beforeEach(async (to, from, next) => {
 })
 
 // 动态添加路由
+export let firstPath: Route | null = null
 export const dynamicAddRoute = () => {
   const userStore = useUserStore()
 
-  userStore.menuInfo.map((item: MenuInfo) => {
-    item.children.map((child: MenuChildInfo) => {
-      if (child.url) {
-        const route: Route = {
-          path: child.url,
-          name: child.url.split('/')[child.url.split('/').length - 1],
+  userStore.menuInfo.length &&
+    userStore.menuInfo.map((item: MenuInfo) => {
+      item.children.map((child: MenuChildInfo) => {
+        if (child.url) {
+          const route: Route = {
+            path: child.url,
+            name: child.url.split('/')[child.url.split('/').length - 1],
 
-          component: modules[`/src/views${child.url}/index.vue`] as () => Component
+            component: modules[`/src/views${child.url}/index.vue`] as () => Component
+          }
+          router.addRoute('main', route)
+
+          if (!firstPath) firstPath = route
         }
-        router.addRoute('main', route)
-      }
+      })
     })
-  })
 }
 
 export default router

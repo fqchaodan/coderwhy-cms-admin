@@ -43,7 +43,7 @@ export const useUserStore = defineStore(
 
       // 获取用户菜单权限
       const roleRes: ResType<MenuInfo[]> = await getUserMenusApi(userRoleInfo.value.id)
-      menuInfo.value = roleRes.data
+      menuInfo.value = roleRes.data || []
 
       // 动态添加路由
       dynamicAddRoute()
@@ -77,6 +77,8 @@ export const useUserStore = defineStore(
         updateAt: ''
       }
       menuInfo.value = []
+      localStorage.clear()
+      sessionStorage.clear()
     }
 
     // 退出登录

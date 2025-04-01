@@ -3,3 +3,8 @@ export interface Route {
   name?: string
   component: () => Component
 }
+
+export interface BreadCrumb {
+  name: string
+  path: string
+}

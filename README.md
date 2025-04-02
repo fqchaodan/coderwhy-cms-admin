@@ -320,3 +320,30 @@ const breadcrumbs = computed(() => {
 })
 ```
 
+## 用户管理
+
+### 国际化
+
+- 第一种方式是全局引入
+- 第二种方式是使用 `el-config-provider` 包裹
+
+```ts
+// 方法一
+import ElementPlus from 'element-plus'
+import zhCn from 'element-plus/es/locale/lang/zh-cn'
+
+app.use(ElementPlus, { locale: zhCn })
+
+// 方法二
+import zhCn from 'element-plus/es/locale/lang/zh-cn'
+
+<el-config-provider :locale="zhCn">
+   <el-date-picker
+		v-model="search.createAt"
+		end-placeholder="截止日期"
+		range-separator="-"
+		start-placeholder="开始日期"
+		type="daterange"
+		></el-date-picker>
+</el-config-provider>
+```

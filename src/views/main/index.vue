@@ -19,7 +19,7 @@ const onIconShow = (show: boolean) => {
         <el-header class="!h-50px !p-0">
           <MainHeader @icon-show="onIconShow" />
         </el-header>
-        <el-main class="bg-gray-1 rounded">
+        <el-main class="bg-gray-1 rounded !p-10px">
           <RouterView />
         </el-main>
       </el-container>

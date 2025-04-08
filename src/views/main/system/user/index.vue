@@ -6,7 +6,7 @@ import UserTable from '@/views/main/system/user/components/UserTable.vue'
 <template>
   <div class="full flex flex-col bg-white rounded p-2 shadow overflow-auto">
     <Search></Search>
-    <el-divider />
+    <el-divider class="!m-y-5" />
     <UserTable class="flex-1"></UserTable>
   </div>
 </template>

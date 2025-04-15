@@ -1,24 +1,26 @@
 <script lang="ts" setup>
 import { ref } from 'vue'
-import zhCn from 'element-plus/es/locale/lang/zh-cn'
 import { ElForm } from 'element-plus'
+import { useSystemStore } from '@/stores/system'
+import zhCn from 'element-plus/es/locale/lang/zh-cn'
 
+const systemStore = useSystemStore()
 const search = ref<System.UserSearchParam>({
   cellphone: undefined,
   name: '',
-  password: '',
   realname: '',
-  enable: 1,
-  createAt: ['', '']
+  enable: '',
+  createAt: null
 })
 const searchForm = ref<InstanceType<typeof ElForm>>()
 
-const reset = () => {
+const reset = async () => {
   searchForm.value?.resetFields()
+  await systemStore.getUserList()
 }
 
 const onSearch = async () => {
-  console.log(search.value)
+  await systemStore.getUserList(search.value)
 }
 </script>
 

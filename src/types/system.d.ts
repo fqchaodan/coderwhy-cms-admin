@@ -1,17 +1,31 @@
 namespace System {
   export interface UserSearchParam {
-    name: string
-    realname: string
-    password: string
-    cellphone: number | undefined
-    enable: number
-    createAt: string[]
+    name?: string
+    realname?: string
+    password?: string
+    cellphone?: string | undefined
+    enable?: number | string
+    createAt?: string[] | null
   }
 
-  export interface PaginationParam {
+  export interface PaginationParam extends UserSearchParam {
     offset: number
     size: number
     totalCount: number
+    // name?: string
+    // realname?: string
+    // cellphone?: string | undefined
+    // enable?: number | string
+    // createAt?: string[]
+  }
+
+  export interface AddUserInfo {
+    name?: string
+    realname?: string
+    password?: string
+    cellphone?: string | undefined
+    roleId?: number | undefined
+    departmentId?: number | undefined
   }
 
   export interface UserInfo {

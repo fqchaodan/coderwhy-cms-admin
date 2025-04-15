@@ -1,7 +1,9 @@
 <script lang="ts" setup>
+import { ref } from 'vue'
 import { useSystemStore } from '@/stores/system'
 import { storeToRefs } from 'pinia'
 import { formatUTC } from '@/utils/format'
+import AddUser from '@/views/main/system/user/components/AddUser.vue'
 
 const systemStore = useSystemStore()
 
@@ -13,13 +15,29 @@ const handleChange = (page: number, pageSize: number) => {
   paginationParam.value.size = pageSize
   systemStore.getUserList()
 }
+
+// 删除用户
+const onClickDelete = async (id: number) => {
+  await systemStore.deleteUser(id)
+}
+
+// 新增用户
+const addUserDialogShow = ref(false)
+const addUser = () => {
+  addUserDialogShow.value = true
+}
+
+const addFinish = () => {
+  addUserDialogShow.value = false
+  systemStore.getUserList()
+}
 </script>
 
 <template>
   <div>
     <div class="w-full flex items-center justify-between">
       <div>用户列表</div>
-      <el-button plain round size="small" type="primary">新增用户</el-button>
+      <el-button plain round size="small" type="primary" @click="addUser">新增用户</el-button>
     </div>
 
     <el-table :data="userList" highlight-current-row>
@@ -46,8 +64,18 @@ const handleChange = (page: number, pageSize: number) => {
       </el-table-column>
 
       <el-table-column fixed="right" label="操作" width="140px">
-        <el-button class="!m-l-0 !p-y-5px !p-x-2px" icon="edit" size="small" text type="warning">修改</el-button>
-        <el-button class="!m-l-0 !p-y-5px !p-x-2px" icon="delete" size="small" text type="danger">删除</el-button>
+        <template #default="scope">
+          <el-button class="!m-l-0 !p-y-5px !p-x-2px" icon="edit" size="small" text type="warning">修改</el-button>
+          <el-button
+            class="!m-l-0 !p-y-5px !p-x-2px"
+            icon="delete"
+            size="small"
+            text
+            type="danger"
+            @click="onClickDelete(scope.row.id)"
+            >删除
+          </el-button>
+        </template>
       </el-table-column>
     </el-table>
 
@@ -61,6 +89,11 @@ const handleChange = (page: number, pageSize: number) => {
         @change="handleChange"
       ></el-pagination>
     </div>
+
+    <!-- 新增用户 -->
+    <el-dialog v-model="addUserDialogShow" destroy-on-close title="新增用户" top="10vh" width="80%">
+      <AddUser @finish="addFinish" />
+    </el-dialog>
   </div>
 </template>
 

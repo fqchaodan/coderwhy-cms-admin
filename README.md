@@ -347,3 +347,56 @@ import zhCn from 'element-plus/es/locale/lang/zh-cn'
 		></el-date-picker>
 </el-config-provider>
 ```
+
+### 请求管理
+
+将用户管理的所有请求都放在 `system.ts` 中，这样可以在不同组件中调用函数，避免频繁使用 `defineExpose ` 或事件总线， 减少代码量
+
+### 分页 & 搜索
+
+需要注意 `offset` 的计算问题，其余皆为常规搜索表单及发送请求
+
+```ts
+// 获取用户列表
+export const getUserListApi: ({ offset, size }: System.PaginationParam) => Promise<any> = ({
+  offset = 1,
+  size = 10,
+  enable = '',
+  cellphone = '',
+  name = '',
+  realname = '',
+  createAt = null
+}: System.PaginationParam) => {
+  return hyRequest.post({
+    url: '/users/list',
+    data: {
+      offset: (offset - 1) * size,
+      size,
+      enable,
+      cellphone,
+      name,
+      realname,
+      createAt
+    }
+  })
+}
+
+```
+
+
+
+### 新增
+
+使用 `el-dialog` 包裹新增用户组件，并接收新增完成后的 `finish` 
+
+新增用户组件则为常规新增表单
+
+```vue
+// UserTable.vue
+
+<!-- 新增用户 -->
+<el-dialog v-model="addUserDialogShow" destroy-on-close title="新增用户" top="10vh" width="80%">
+  <AddUser @finish="addFinish" />
+</el-dialog>
+```
+
